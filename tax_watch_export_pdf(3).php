@@ -110,11 +110,16 @@ function entryAdjust($space, $content, $bottom){
 							
 					}
 						if($bottom == 0){
+
 								$this->Ln(-8);
 								$this->SetX(75);
+								
 								} elseif($bottom == 'B') {
+							
+								
 								$this->Ln(-7);
 								$this->SetX(70);
+								
 							}
 					
 			} elseif(strrpos($content, "/") == true){
@@ -376,7 +381,16 @@ if (count($rows)) {
 		$fulladdress = $address."\n".$city." ".$state." , ".$zip;
 		$fulladdress = (string)$fulladdress;
 		$adjust = 0;
+		$k = 0;
 		
+		$borrower = ltrim(rtrim($borrower));
+		
+		/*if(strlen($borrower) > 23){
+				$conArray = array();
+				$conArray = str_split($borrwer, 23);
+				$k = sizeof($conArray);
+			}
+		*/
 
 		
 		
@@ -441,6 +455,7 @@ if (count($rows)) {
 //This section loops through the query results and attempts to structure them through table rows and cells. 
 
 if($notes != null){ //Checks for notes
+
 $pdf->entryAdjust(25, $loan_id, 0);
 $pdf->entryAdjust(40, $borrower, 0);
 $pdf->MultiCell(60, 4, $fulladdress, 0, 'L');
@@ -466,9 +481,9 @@ $pdf->br();
 $pdf->entry(300, $notes, 'B', 1);
 
 } else {
-$pdf->entryAdjust(25, $loan_id, 'B');
-$pdf->entryAdjust(40, $borrower, 'B');
-$pdf->MultiCell(60, 4, $fulladdress, 'B', 'L');
+$pdf->entryAdjust(25, $loan_id, 0);
+$pdf->entryAdjust(40, $borrower, 0);
+$pdf->MultiCell(60, 4, $fulladdress, 0, 'L');
 $pdf->Ln(-8);
 $pdf->SetX(135);
 //$pdf->entry(60, $fulladdress, 'B', 0);
@@ -479,14 +494,14 @@ $pdf->SetX(135);
 	
 if(is_numeric($dStatus)){
 						setlocale(LC_MONETARY, 'en_US');
-						$pdf->entry(25, "$".number_format($dStatus, 2), 'B', 0);
+						$pdf->entry(25, "$".number_format($dStatus, 2), 0, 0);
 				}
 					else {
-						$pdf->entry(25, $dStatus, 'B', 0);
+						$pdf->entry(25, $dStatus, 0, 0);
 				}
-$pdf->entry(25, $cover_date, 'B', 0);
-$pdf->entry(25, $next_run, 'B', 1);
-
+$pdf->entry(25, $cover_date, 0, 0);
+$pdf->entry(25, $next_run, 0, 1);
+$pdf->Cell(900, 2, "", 'B', 1, 'L');
 }
 
 		unset($current_row);
