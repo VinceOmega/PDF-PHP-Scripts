@@ -72,8 +72,8 @@ $this->Cell(250, 10, 'SearchTec - '.$custNBranch, 'B', 1, 'L');
 $this->Cell(250, 10, 'Tax Watch Report' , 0, 0, 'L');
 $this->Ln(10);
 $this->SetFont('Helvetica', 'B', 10);
-$this->Cell(30, 10, "Loan ID", 'B', 0, 'L');
-$this->Cell(45, 10, "Borrower", 'B', 0, 'L');
+$this->Cell(35, 10, "Loan ID/Officer", 'B', 0, 'L');
+$this->Cell(40, 10, "Borrower", 'B', 0, 'L');
 $this->Cell(43, 10, "Address", 'B', 0, 'L');
 $this->Cell(30, 10, "Delinquency", 'B', 0, 'L');
 $this->Cell(25, 10, "Cover Date", 'B', 0, 'L');
@@ -89,7 +89,7 @@ function entry($margin, $info, $border, $spacing){
 
 }
 // entryAdjust will adjust the Loan ID and Borrower fields based on length or delimiter.
-function entryAdjust($space, $content, $bottom){
+function entryAdjust($space, $content, $bottom, $flag){
 		$i = 0;
 		$content = (string)$content;
 		
@@ -122,10 +122,24 @@ function entryAdjust($space, $content, $bottom){
 								
 							}
 					
-			} elseif(strrpos($content, "/") == true){
-					$this->SetFont('Helvetica', '', 6);
-					$this->entry($space, $content, $bottom, 0);
+			} elseif($flag == 1) {
+					if(strrpos($content, "/") == true){
+					$this->SetFont('Helvetica', '', 5);
+					$conArray = explode("/", $content);
+					foreach($conArray as $key){
+					$this->entry($space, $key, $bottom, 0);
+					$this->SetX(34);
+					}
 					$this->SetFont('Helvetica', '', 8);
+						}else{
+					$this->MultiCell($space, 4,  $content, 0, 'L');
+					$this->SetFont('Helvetica', '', 8);
+					$y = $this->GetY();
+					$this->SetY($y - 4.2);
+					$this->SetX(34);
+							}
+					
+			
 			}else {
 				
 				$this->entry($space, $content, $bottom, 0);
@@ -380,6 +394,8 @@ if (count($rows)) {
 		$notes = $current_row['notes'];
 		$fulladdress = $address."\n".$city." ".$state." , ".$zip;
 		$fulladdress = (string)$fulladdress;
+		$idandofficer = $loan_id."\n".$loan_officer;
+		$idandofficer = ltrim(rtrim((string)$idandofficer));
 		$adjust = 0;
 		$k = 0;
 		
@@ -456,7 +472,7 @@ if (count($rows)) {
 
 if($notes != null){ //Checks for notes
 
-$pdf->entryAdjust(25, $loan_id, 0);
+$pdf->entryAdjust(25, $idandofficer, 0, 1);
 $pdf->entryAdjust(40, $borrower, 0);
 $pdf->MultiCell(60, 4, $fulladdress, 0, 'L');
 $pdf->Ln(-7);
@@ -481,7 +497,7 @@ $pdf->br();
 $pdf->entry(300, $notes, 'B', 1);
 
 } else {
-$pdf->entryAdjust(25, $loan_id, 0);
+$pdf->entryAdjust(25, $idandofficer, 0, 1);
 $pdf->entryAdjust(40, $borrower, 0);
 $pdf->MultiCell(60, 4, $fulladdress, 0, 'L');
 $pdf->Ln(-8);
@@ -501,7 +517,7 @@ if(is_numeric($dStatus)){
 				}
 $pdf->entry(25, $cover_date, 0, 0);
 $pdf->entry(25, $next_run, 0, 1);
-$pdf->Cell(900, 2, "", 'B', 1, 'L');
+$pdf->Cell(900, 4, "", 'B', 1, 'L');
 }
 
 		unset($current_row);
